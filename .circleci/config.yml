@@ -1,15 +1,18 @@
 version: 2.1
-orbs:
-  slack: circleci/slack@4.9.3
+
 jobs:
-  notify:
+  hello-job:
     docker:
-      - image: 'cimg/base:stable'
+      - image: cimg/node:17.2.0 # the primary container, where your job's commands are run
         auth:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
+      - checkout # check out the code in the project directory
+      - run: echo "hello world" # run the `echo` command
       - slack/notify:
+          channel: 'C04B28F4YHF, C04ALLNRGBF'
+          branch_pattern: main
           custom: |
             {
               "blocks": [
@@ -18,7 +21,7 @@ jobs:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "*This is a text notification*",
+                      "text": "Friday Stage DB refrersh has been complete",
                       "emoji": true
                     }
                   ]
@@ -26,8 +29,10 @@ jobs:
               ]
             }
           event: always
+          
 workflows:
-  send-notification:
+  my-workflow:
     jobs:
-      - notify:
+      - hello-job:
           context: slack-secrets
+     
